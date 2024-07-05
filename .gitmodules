@@ -1,0 +1,3 @@
+[submodule "AdvCoLo"]
+	path = AdvCoLo
+	url = git@github.com:EvorsioDev/AdvCoLo.git

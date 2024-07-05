@@ -1,0 +1,4 @@
+name: CommandWands
+version: '${version}'
+main: ru.armagidon.commandwands.CommandWands
+api-version: '1.19'
