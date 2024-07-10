@@ -1,4 +1,4 @@
 name: CommandWands
 version: '${version}'
-main: ru.armagidon.commandwands.CommandWands
+main: ru.evorsio.commandwands.CommandWands
 api-version: '1.19'

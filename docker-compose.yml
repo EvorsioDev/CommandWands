@@ -1,0 +1,29 @@
+services:
+  test-server:
+    image: "itzg/minecraft-server"
+    ports:
+      - 25565:25565
+    environment:
+      EULA: "TRUE"
+      VERSION: "1.20.4"
+      TYPE: "PAPER"
+      MODE: creative
+      EXEC_DIRECTLY: true
+      OPS: |
+        Armagidon_MC
+      ALLOW_NETHER: false
+      MAX_WORLD_SIZE: 500
+      SPAWN_MONSTERS: false
+      LEVEL_TYPE: FLAT
+      RCON_CMDS_STARTUP: |-
+        gamerule doDaylightCycle false
+        gamerule doWeatherCycle false
+        time set day
+
+    tty: true
+    stdin_open: true
+    volumes:
+      - "./build/libs/:/data/plugins"
+    hostname: test-server
+    extra_hosts:
+      - host.docker.internal:host-gateway
