@@ -2,8 +2,9 @@ package ru.evorsio.commandwands.config.interfaces;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
+import ru.armagidon.advcolo.loader.ReloadableConfig;
 
-public interface MessagesConfig {
+public interface MessagesConfig extends ReloadableConfig {
 
   Component wandExists(String input);
 

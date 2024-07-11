@@ -1,52 +1,54 @@
 package ru.evorsio.commandwands.math.equation;
 
-import java.util.HashMap;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import java.util.List;
-import java.util.Map;
 import lombok.Getter;
 
 @Getter
 public enum Operators implements Function {
 
-  ADD(3, 2) {
+  ADD(3, 2, "+") {
     @Override
     public double apply(double... args) {
       return args[0] + args[1];
     }
   },
-  SUBTRACT(3, 2) {
+  SUBTRACT(3, 2, "-") {
     @Override
     public double apply(double... args) {
       return args[0] - args[1];
     }
   },
-  MULTIPLY(2, 2){
+  MULTIPLY(2, 2, "*"){
     @Override
     public double apply(double... args) {
       return args[0] * args[1];
     }
   },
-  DIVIDE(2, 2){
+  DIVIDE(2, 2, "/"){
     @Override
     public double apply(double... args) {
       return args[0] / args[1];
     }
   },
-  NEGATE(2, 1){
+  NEGATE(2, 1, "-"){
     @Override
     public double apply(double... args) {
       return -args[0];
     }
   };
 
-  private static final Map<String, List<Operators>> BY_NAME = new HashMap<>();
+  private static final BiMap<String, List<Operators>> BY_NAME = HashBiMap.create();
 
   private final int precedence;
   private final int arity;
+  private final String name;
 
-  Operators(int precedence, int arity) {
+  Operators(int precedence, int arity, String name) {
     this.precedence = precedence;
     this.arity = arity;
+    this.name = name;
   }
 
   static {

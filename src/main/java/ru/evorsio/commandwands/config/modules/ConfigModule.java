@@ -11,6 +11,7 @@ import ru.armagidon.advcolo.loader.FileConfigLoader;
 import ru.evorsio.commandwands.config.holders.MessageConfigHolder;
 import ru.evorsio.commandwands.config.interfaces.MessagesConfig;
 import ru.evorsio.commandwands.config.loader.YamlConfigLoader;
+import ru.evorsio.commandwands.wand.impl.WandConfigLoader;
 
 public class ConfigModule extends AbstractModule {
 
@@ -35,7 +36,7 @@ public class ConfigModule extends AbstractModule {
 
   @Provides
   @Singleton
-  private MessagesConfig messagesConfig(@Named("yaml") FileConfigLoader loader) {
+  private MessagesConfig messagesConfig(@Named("yaml") FileConfigLoader loader) throws IOException {
     return loader.load(new File(dataFolder, "messages.yml"), MessagesConfig.class,
         MessageConfigHolder.class);
   }

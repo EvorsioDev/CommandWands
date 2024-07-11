@@ -12,7 +12,11 @@ public class Literal implements Term {
   }
 
   @Override
-  public double compute(double t) {
+  public double compute(double... params) {
+    return value;
+  }
+
+  public double getValue() {
     return value;
   }
 }

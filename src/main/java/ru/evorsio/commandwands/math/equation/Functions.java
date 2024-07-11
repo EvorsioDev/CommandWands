@@ -1,7 +1,7 @@
 package ru.evorsio.commandwands.math.equation;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import lombok.Getter;
 
 @Getter
@@ -48,12 +48,16 @@ public enum Functions implements Function {
     }
   };
 
-  private static final Map<String, Functions> BY_FUNCTOR = new HashMap<>();
+  private static final BiMap<String, Functions> BY_FUNCTOR = HashBiMap.create();
 
   private final int arity;
 
   Functions(int arity) {
     this.arity = arity;
+  }
+
+  public String getName(){
+    return BY_FUNCTOR.inverse().get(this);
   }
 
   static {
@@ -69,7 +73,6 @@ public enum Functions implements Function {
   public static Functions getByFunctor(String functor) {
     return BY_FUNCTOR.get(functor);
   }
-
 
   public static boolean isFunction(String functor) {
     return BY_FUNCTOR.containsKey(functor);

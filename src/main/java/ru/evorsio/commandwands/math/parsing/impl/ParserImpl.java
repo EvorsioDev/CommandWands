@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.EmptyStackException;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.Map.Entry;
 import java.util.Stack;
 import ru.evorsio.commandwands.math.equation.Expression;
 import ru.evorsio.commandwands.math.equation.Function;
@@ -20,9 +20,6 @@ import ru.evorsio.commandwands.math.parsing.Token;
 import ru.evorsio.commandwands.math.parsing.TokenType;
 
 // TODO
-// Unary minus fix
-// Function names fix
-// Code cleanup
 public class ParserImpl implements Parser {
 
 
@@ -31,12 +28,39 @@ public class ParserImpl implements Parser {
       "E", Math.E
   );
 
-  private static final String PARAMETER_NAME = "t";
+  private final Map<String, Integer> parameters;
 
+  public ParserImpl() {
+    this(Map.of("t", 0));
+  }
+
+  public ParserImpl(Map<String, Integer> parameters) {
+    this.parameters = parameters;
+  }
+
+
+  private void validateParameterNames(Map<String, Integer> parameters) {
+    for (Entry<String, Integer> entry : parameters.entrySet()) {
+      if (entry.getValue() < 0)
+        throw new IllegalArgumentException("Parameter index must be non-negative");
+      else if (entry.getValue() >= parameters.size())
+        throw new IllegalArgumentException("Parameter index must be less parameter count");
+      else if (Functions.isFunction(entry.getKey()))
+        throw new IllegalArgumentException("Parameter cannot have the same name as predefined function");
+      else if (Operators.isOperator(entry.getKey()))
+        throw new IllegalArgumentException("Parameter cannot have the same name as predefined operator");
+    }
+  }
+
+
+  @Override
   public Term parse(String input) throws ParserException {
     Stack<Term> output = new Stack<>();
     Stack<Operator> opStack = new Stack<>();
     Tape tape = new Tape(input);
+    if (input.isBlank()) {
+      return new Literal(0);
+    }
     while (!tape.isDone()) {
       Token token;
       if (tape.getRegion().isBlank()) {
@@ -51,7 +75,15 @@ public class ParserImpl implements Parser {
       } else {
         throw new ParserException("Unrecognized token", tape.getStart(), tape.getEnd(), input);
       }
+
+
       if (token.getType() == TokenType.NUMBER) {
+        if (token.getPrevious() != null) {
+          switch (token.getPrevious().getType()) {
+            case NUMBER, QUALIFIER, PAREN_RIGHT:
+              throw new ParserException("Cannot put qualifier here", token);
+          }
+        }
         output.add(new Literal(Double.parseDouble(token.getValue())));
       } else if (Functions.isFunction(token.getValue())) {
         opStack.push(new Operator(token, Functions.getByFunctor(token.getValue())));
@@ -78,12 +110,19 @@ public class ParserImpl implements Parser {
         }
         opStack.push(new Operator(token, operator));
       } else if (token.getType() == TokenType.QUALIFIER) {
-        if (token.getValue().equals(PARAMETER_NAME)) {
-          output.push(new Parameter());
+        if (token.getPrevious() != null) {
+          switch (token.getPrevious().getType()) {
+            case NUMBER, QUALIFIER, PAREN_RIGHT:
+              throw new ParserException("Cannot put qualifier here", token);
+          }
+        }
+
+        if (parameters.containsKey(token.getValue())) {
+          output.push(new Parameter(token.getValue(), parameters.get(token.getValue())));
         } else if (CONSTANTS.containsKey(token.getValue())) {
           output.push(new Literal(CONSTANTS.get(token.getValue())));
         } else {
-          throw new ParserException("Unrecognized token", token);
+          throw new ParserException("Unrecognized constant", token);
         }
       } else if (token.getType() == TokenType.PAREN_LEFT) {
         if (token.getPrevious() != null) {

@@ -58,7 +58,7 @@ public final class Tape {
   }
 
   public Token readString() {
-    while (end < input.length() && Character.isLetter(input.charAt(end))) {
+    while (end < input.length() && (Character.isLetter(input.charAt(end)) || Character.isDigit(input.charAt(end)))) {
       end++;
     }
     Token t = new Token(input, start, end - 1, TokenType.QUALIFIER, previous);

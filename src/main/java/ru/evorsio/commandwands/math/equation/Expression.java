@@ -12,12 +12,21 @@ public class Expression implements Term{
     this.function = function;
   }
 
+
   @Override
-  public double compute(double t) {
-    double[] args = terms.stream().map(term -> term.compute(t))
+  public double compute(double... params) {
+    double[] args = terms.stream().map(term -> term.compute(params))
         .mapToDouble(Double::doubleValue)
         .toArray();
 
     return function.apply(args);
+  }
+
+  public Function getFunction() {
+    return function;
+  }
+
+  public List<Term> getTerms() {
+    return terms;
   }
 }
